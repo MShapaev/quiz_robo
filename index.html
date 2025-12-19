@@ -1,4 +1,9 @@
-<title>5С Силаэдр - Викторина по робототехнике</title>
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>5С Силаэдр - Викторина по робототехнике</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
@@ -317,6 +322,16 @@
             background-color: rgba(231, 76, 60, 0.1);
         }
 
+        .option.disabled {
+            cursor: not-allowed;
+            opacity: 0.8;
+        }
+
+        .option.disabled:hover {
+            transform: none;
+            box-shadow: var(--shadow);
+        }
+
         .option-letter {
             display: inline-flex;
             align-items: center;
@@ -370,6 +385,7 @@
             justify-content: space-between;
             margin-top: 30px;
             gap: 15px;
+            flex-wrap: wrap;
         }
 
         .btn {
@@ -521,7 +537,7 @@
                 left: -100%;
                 top: 0;
                 bottom: 0;
-                width: 280px;
+                width: 300px; /* Уже навигация для мобильных */
                 transition: left 0.3s ease;
             }
             
@@ -550,20 +566,49 @@
             .btn {
                 width: 100%;
             }
+            
+            /* Увеличение шрифтов для мобильных */
+            .question-text {
+                font-size: 1.2rem;
+                line-height: 1.8;
+            }
+            
+            .question-title {
+                font-size: 1.4rem;
+            }
+            
+            .option {
+                font-size: 1.1rem;
+                padding: 20px;
+            }
+            
+            .explanation-text {
+                font-size: 1.1rem;
+            }
         }
 
         @media (max-width: 480px) {
+            .navigation-panel {
+                width: 280px; /* Еще уже на очень маленьких экранах */
+            }
+            
             .question-nav {
                 grid-template-columns: repeat(4, 1fr);
             }
             
             .question-title {
-                font-size: 1.3rem;
+                font-size: 1.5rem;
             }
             
             .question-text {
                 padding: 20px;
-                font-size: 1rem;
+                font-size: 1.3rem;
+                line-height: 1.9;
+            }
+            
+            .option {
+                font-size: 1.15rem;
+                padding: 18px;
             }
             
             .logo {
@@ -576,6 +621,19 @@
             
             .info-card {
                 padding: 20px;
+            }
+            
+            .info-card h2 {
+                font-size: 1.4rem;
+            }
+            
+            .action-buttons {
+                gap: 10px;
+            }
+            
+            .btn {
+                padding: 14px 20px;
+                font-size: 1.1rem;
             }
         }
     </style>
@@ -600,6 +658,9 @@
             <div class="score-container">
                 <div class="score-value" id="currentScore">0</div>
                 <div class="score-label">баллов</div>
+                <button class="btn btn-secondary" id="restartFromNav" style="margin-top: 15px; width: 100%;">
+                    <i class="fas fa-redo"></i> Начать заново
+                </button>
             </div>
         </div>
 
@@ -674,6 +735,10 @@
                         <i class="fas fa-arrow-left"></i> Предыдущий
                     </button>
                     
+                    <button class="btn btn-secondary" id="restartButton">
+                        <i class="fas fa-redo"></i> Начать заново
+                    </button>
+                    
                     <button class="btn btn-primary" id="submitButton">
                         <i class="fas fa-check"></i> Ответить
                     </button>
@@ -703,7 +768,7 @@
                     <p>Вы можете просмотреть свои ответы и пояснения, переходя по вопросам через навигационную панель.</p>
                 </div>
                 
-                <button class="restart-button" id="restartButton">
+                <button class="restart-button" id="restartResultsButton">
                     <i class="fas fa-redo"></i> Начать заново
                 </button>
             </div>
@@ -1022,7 +1087,7 @@
                     "ШИМ"
                 ],
                 "correct": [1],
-                "explanation": "GND = Ground — «земля», общая точка отсчёта напряжения, 0 В.\nВсе напряжения в схеме измеряются относительно GND.\n❗ Это не обязательно «физическая земля» — просто общая шина.\nНа платах Arduino есть несколько контактов GND — все соединены внутри.",
+                "explanation": "GND = Ground — «земля», общая точка отсчёта напряжения, 0 В.\nВсе напряжения в схеме измеряются относительно GND.\n❗ Это не обязательно «физическая земля» — просто общая шина.\nНа платах Arduino есть несколько контакта GND — все соединены внутри.",
                 "multiple": false
             },
             {
@@ -1432,6 +1497,8 @@
             const submitButton = document.getElementById('submitButton');
             const nextButton = document.getElementById('nextButton');
             const restartButton = document.getElementById('restartButton');
+            const restartFromNav = document.getElementById('restartFromNav');
+            const restartResultsButton = document.getElementById('restartResultsButton');
             const mobileNavToggle = document.getElementById('mobileNavToggle');
             const navigationPanel = document.getElementById('navigationPanel');
             const questionNav = document.getElementById('questionNav');
@@ -1455,6 +1522,7 @@
             // Состояние приложения
             let currentQuestionIndex = 0;
             let userAnswers = Array(totalQuestions).fill(null);
+            let answerSubmitted = Array(totalQuestions).fill(false);
             let score = 0;
             
             // Инициализация навигации по вопросам
@@ -1468,7 +1536,8 @@
                     navItem.dataset.index = i;
                     
                     // Обновляем класс в зависимости от состояния ответа
-                    if (userAnswers[i] !== null) {
+                    // Вопрос закрашивается только после отправки ответа
+                    if (answerSubmitted[i]) {
                         const isCorrect = checkAnswerCorrectness(i);
                         navItem.classList.remove('unanswered');
                         navItem.classList.add(isCorrect ? 'correct' : 'incorrect');
@@ -1541,7 +1610,7 @@
                 // Показываем/скрываем кнопки навигации
                 prevButton.style.display = index > 0 ? 'flex' : 'none';
                 nextButton.style.display = 'none';
-                submitButton.style.display = 'flex';
+                submitButton.style.display = answerSubmitted[index] ? 'none' : 'flex';
                 
                 // Скрываем пояснение
                 explanationContainer.classList.remove('show');
@@ -1578,14 +1647,17 @@
                         optionElement.classList.add('selected');
                     }
                     
-                    // Если ответ уже дан, показываем правильные/неправильные варианты
-                    if (userAnswers[currentQuestionIndex] !== null) {
+                    // Если ответ уже отправлен, показываем правильные/неправильные варианты
+                    if (answerSubmitted[currentQuestionIndex]) {
                         const isCorrect = question.correct.includes(index);
                         if (isCorrect) {
                             optionElement.classList.add('correct');
                         } else if (isSelected && !isCorrect) {
                             optionElement.classList.add('incorrect');
                         }
+                        
+                        // Блокируем варианты ответа
+                        optionElement.classList.add('disabled');
                     }
                     
                     // Добавляем букву варианта
@@ -1601,16 +1673,18 @@
                     optionElement.appendChild(optionLetter);
                     optionElement.appendChild(optionText);
                     
-                    // Добавляем обработчик клика только если ответ еще не дан
-                    if (userAnswers[currentQuestionIndex] === null) {
+                    // Добавляем обработчик клика только если ответ еще не отправлен
+                    if (!answerSubmitted[currentQuestionIndex]) {
                         optionElement.addEventListener('click', () => selectOption(index));
+                    } else {
+                        optionElement.classList.add('disabled');
                     }
                     
                     optionsContainer.appendChild(optionElement);
                 });
                 
-                // Обновляем пояснение если ответ уже дан
-                if (userAnswers[currentQuestionIndex] !== null) {
+                // Обновляем пояснение если ответ уже отправлен
+                if (answerSubmitted[currentQuestionIndex]) {
                     explanationText.innerHTML = `<p>${question.explanation.replace(/\n/g, '<br>')}</p>`;
                     explanationContainer.classList.add('show');
                     
@@ -1653,7 +1727,7 @@
                     userAnswers[currentQuestionIndex] = selectedOptions;
                 }
                 
-                // Обновляем навигацию
+                // Обновляем навигацию (но не меняем цвет, пока не отправлен ответ)
                 initQuestionNavigation();
             }
             
@@ -1665,6 +1739,9 @@
                 }
                 
                 const question = questions[currentQuestionIndex];
+                
+                // Отмечаем, что ответ был отправлен
+                answerSubmitted[currentQuestionIndex] = true;
                 
                 // Показываем пояснение
                 explanationText.innerHTML = `<p>${question.explanation.replace(/\n/g, '<br>')}</p>`;
@@ -1682,6 +1759,9 @@
                         option.classList.add('incorrect');
                     }
                     
+                    // Блокируем варианты ответа
+                    option.classList.add('disabled');
+                    
                     // Убираем возможность выбора после ответа
                     option.style.cursor = 'default';
                     option.onclick = null;
@@ -1694,7 +1774,7 @@
                 submitButton.style.display = 'none';
                 nextButton.style.display = 'flex';
                 
-                // Обновляем навигацию
+                // Обновляем навигацию (теперь вопрос закрасится)
                 initQuestionNavigation();
                 
                 // Если это последний вопрос, меняем текст кнопки
@@ -1731,9 +1811,14 @@
             
             // Начать викторину заново
             function restartQuiz() {
+                if (!confirm('Вы уверены, что хотите начать заново? Весь прогресс будет сброшен.')) {
+                    return;
+                }
+                
                 // Сбрасываем состояние
                 currentQuestionIndex = 0;
                 userAnswers = Array(totalQuestions).fill(null);
+                answerSubmitted = Array(totalQuestions).fill(false);
                 score = 0;
                 
                 // Показываем стартовую страницу
@@ -1743,6 +1828,9 @@
                 
                 // Обновляем счет
                 updateScore();
+                
+                // Обновляем навигацию
+                initQuestionNavigation();
             }
             
             // Инициализация приложения
@@ -1773,6 +1861,8 @@
                 });
                 
                 restartButton.addEventListener('click', restartQuiz);
+                restartFromNav.addEventListener('click', restartQuiz);
+                restartResultsButton.addEventListener('click', restartQuiz);
                 
                 mobileNavToggle.addEventListener('click', () => {
                     navigationPanel.classList.toggle('active');
