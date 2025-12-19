@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=0.95, maximum-scale=1.0, user-scalable=no">
     <title>5С Силаэдр - Викторина по робототехнике</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -17,6 +17,7 @@
             --dark-text: #2c3e50;
             --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             --border-radius: 8px;
+            --question-bg: #e0e0e0; /* Более темный серый цвет */
         }
 
         * {
@@ -31,6 +32,8 @@
             color: var(--dark-text);
             line-height: 1.6;
             -webkit-text-size-adjust: 100%;
+            overflow-x: hidden;
+            touch-action: pan-y;
         }
 
         .app-container {
@@ -275,13 +278,14 @@
         }
 
         .question-text {
-            background-color: white;
+            background-color: var(--question-bg); /* Применяем более темный серый цвет */
             padding: 25px;
             border-radius: var(--border-radius);
             box-shadow: var(--shadow);
             margin-bottom: 25px;
             font-size: 1.1rem;
             line-height: 1.7;
+            border-left: 4px solid var(--secondary-color);
         }
 
         .question-text p {
@@ -475,6 +479,26 @@
             box-shadow: var(--shadow);
         }
 
+        /* Плавающая кнопка "Начать заново" для мобильных */
+        .mobile-restart-btn {
+            display: none;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background-color: var(--accent-color);
+            color: white;
+            border: none;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            font-size: 1.2rem;
+            z-index: 1000;
+            cursor: pointer;
+            box-shadow: var(--shadow);
+            justify-content: center;
+            align-items: center;
+        }
+
         /* Результаты */
         .results-page {
             display: flex;
@@ -529,10 +553,119 @@
             box-shadow: 0 6px 15px rgba(52, 152, 219, 0.4);
         }
 
+        /* Детальная статистика */
+        .detailed-stats {
+            background-color: white;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            margin-top: 20px;
+            text-align: left;
+            width: 100%;
+        }
+
+        .detailed-stats h3 {
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            background-color: var(--light-bg);
+            padding: 15px;
+            border-radius: var(--border-radius);
+        }
+
+        .stat-box-title {
+            font-size: 0.9rem;
+            color: var(--neutral-color);
+            margin-bottom: 5px;
+        }
+
+        .stat-box-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+
+        .question-time-info {
+            margin-top: 10px;
+            font-size: 0.9rem;
+            color: var(--neutral-color);
+            font-style: italic;
+        }
+
+        /* Режим обучения */
+        .study-mode-btn {
+            background-color: #9b59b6;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: var(--border-radius);
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin: 10px 0;
+        }
+
+        .study-mode-btn:hover {
+            background-color: #8e44ad;
+            transform: translateY(-3px);
+        }
+
+        .study-mode-indicator {
+            background-color: #9b59b6;
+            color: white;
+            padding: 8px 15px;
+            border-radius: 50px;
+            font-weight: bold;
+            font-size: 0.9rem;
+            margin-left: 10px;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+
         /* Анимации */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
+        }
+
+        @keyframes correctAnswer {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        @keyframes incorrectAnswer {
+            0% { transform: translateX(0); }
+            25% { transform: translateX(-10px); }
+            75% { transform: translateX(10px); }
+            100% { transform: translateX(0); }
+        }
+
+        .option.correct {
+            animation: correctAnswer 0.5s ease;
+        }
+
+        .option.incorrect {
+            animation: incorrectAnswer 0.3s ease;
         }
 
         /* Адаптивность */
@@ -548,7 +681,11 @@
 
         @media (max-width: 768px) {
             html {
-                font-size: 14px; /* Уменьшаем базовый размер шрифта для мобильных */
+                font-size: 15px; /* Увеличили с 13px до 15px */
+            }
+            
+            body {
+                zoom: 0.98;
             }
             
             .app-container {
@@ -574,8 +711,12 @@
                 justify-content: center;
             }
             
+            .mobile-restart-btn {
+                display: flex;
+            }
+            
             .content-area {
-                padding: 70px 15px 20px;
+                padding: 80px 15px 20px;
                 min-height: 100vh;
             }
             
@@ -587,7 +728,7 @@
             .question-nav-item {
                 width: 36px;
                 height: 36px;
-                font-size: 0.9rem;
+                font-size: 0.95rem; /* Увеличили с 0.9rem */
             }
             
             .action-buttons {
@@ -601,45 +742,45 @@
             }
             
             .question-text {
-                font-size: 1.1rem;
+                font-size: 1.15rem; /* Увеличили с 1.1rem */
                 line-height: 1.7;
                 padding: 20px;
                 margin-bottom: 20px;
             }
             
             .question-title {
-                font-size: 1.3rem;
+                font-size: 1.4rem; /* Увеличили с 1.3rem */
             }
             
             .question-counter {
-                font-size: 0.9rem;
-                padding: 7px 12px;
+                font-size: 1rem; /* Увеличили с 0.9rem */
+                padding: 8px 15px; /* Увеличили padding */
             }
             
             .option {
-                font-size: 1.05rem;
+                font-size: 1.1rem; /* Увеличили с 1.05rem */
                 padding: 16px;
                 margin-bottom: 12px;
             }
             
             .option-letter {
-                width: 32px;
-                height: 32px;
-                font-size: 0.95rem;
+                width: 34px; /* Увеличили с 32px */
+                height: 34px; /* Увеличили с 32px */
+                font-size: 1rem; /* Увеличили с 0.95rem */
                 margin-right: 12px;
             }
             
             .explanation-text {
-                font-size: 1.05rem;
+                font-size: 1.1rem; /* Увеличили с 1.05rem */
                 line-height: 1.6;
             }
             
             .logo {
-                font-size: 2.8rem;
+                font-size: 3rem; /* Увеличили с 2.8rem */
             }
             
             .logo-subtitle {
-                font-size: 1.3rem;
+                font-size: 1.4rem; /* Увеличили с 1.3rem */
             }
             
             .info-card {
@@ -647,17 +788,17 @@
             }
             
             .info-card h2 {
-                font-size: 1.3rem;
+                font-size: 1.4rem; /* Увеличили с 1.3rem */
             }
             
             .start-button, .restart-button {
-                padding: 14px 35px;
-                font-size: 1.1rem;
+                padding: 15px 40px; /* Увеличили с 14px 35px */
+                font-size: 1.15rem; /* Увеличили с 1.1rem */
             }
             
             .multiple-select-note, .selection-limit {
                 padding: 12px;
-                font-size: 0.95rem;
+                font-size: 1rem; /* Увеличили с 0.95rem */
             }
             
             .explanation {
@@ -665,13 +806,42 @@
             }
             
             .score-value {
-                font-size: 1.8rem;
+                font-size: 1.9rem; /* Увеличили с 1.8rem */
+            }
+            
+            /* Скрываем кнопку "Начать заново" в навигации на мобильных */
+            #restartFromNav {
+                display: none;
+            }
+            
+            /* Скрываем кнопку "Начать заново" внизу на мобильных */
+            #restartButton {
+                display: none !important;
+            }
+            
+            /* Показываем кнопку "Начать заново" в мобильной версии в контенте */
+            .mobile-action-buttons {
+                display: flex;
+                gap: 10px;
+                margin-bottom: 15px;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .detailed-stats {
+                padding: 20px;
             }
         }
 
         @media (max-width: 480px) {
             html {
-                font-size: 13px; /* Еще больше уменьшаем шрифт на очень маленьких экранах */
+                font-size: 14px; /* Увеличили с 12px до 14px */
+            }
+            
+            body {
+                zoom: 0.95;
             }
             
             .navigation-panel {
@@ -686,37 +856,37 @@
             .question-nav-item {
                 width: 34px;
                 height: 34px;
-                font-size: 0.85rem;
+                font-size: 0.9rem; /* Увеличили с 0.85rem */
             }
             
             .question-title {
-                font-size: 1.25rem;
+                font-size: 1.3rem; /* Увеличили с 1.25rem */
             }
             
             .question-text {
                 padding: 18px;
-                font-size: 1.05rem;
+                font-size: 1.1rem; /* Увеличили с 1.05rem */
                 line-height: 1.6;
             }
             
             .option {
-                font-size: 1rem;
+                font-size: 1.05rem; /* Увеличили с 1rem */
                 padding: 14px;
             }
             
             .option-letter {
-                width: 30px;
-                height: 30px;
-                font-size: 0.9rem;
+                width: 32px; /* Увеличили с 30px */
+                height: 32px; /* Увеличили с 30px */
+                font-size: 0.95rem; /* Увеличили с 0.9rem */
                 margin-right: 10px;
             }
             
             .logo {
-                font-size: 2.3rem;
+                font-size: 2.5rem; /* Увеличили с 2.3rem */
             }
             
             .logo-subtitle {
-                font-size: 1.1rem;
+                font-size: 1.2rem; /* Увеличили с 1.1rem */
             }
             
             .info-card {
@@ -724,7 +894,7 @@
             }
             
             .info-card h2 {
-                font-size: 1.2rem;
+                font-size: 1.3rem; /* Увеличили с 1.2rem */
             }
             
             .action-buttons {
@@ -737,21 +907,37 @@
             }
             
             .content-area {
-                padding: 65px 12px 15px;
+                padding: 75px 12px 15px;
             }
             
             .final-score {
-                font-size: 2.8rem;
+                font-size: 3rem; /* Увеличили с 2.8rem */
             }
             
             .score-message {
+                font-size: 1.15rem; /* Увеличили с 1.1rem */
+            }
+            
+            .mobile-restart-btn {
+                width: 45px;
+                height: 45px;
                 font-size: 1.1rem;
+            }
+            
+            .mobile-nav-toggle {
+                width: 45px;
+                height: 45px;
+                font-size: 1.3rem;
             }
         }
         
         @media (max-width: 360px) {
             html {
-                font-size: 12px; /* Минимальный размер шрифта для очень старых телефонов */
+                font-size: 13px; /* Увеличили с 11px до 13px */
+            }
+            
+            body {
+                zoom: 0.92;
             }
             
             .question-nav-item {
@@ -761,10 +947,26 @@
             
             .question-text {
                 padding: 15px;
+                font-size: 1.05rem; /* Увеличили */
             }
             
             .option {
                 padding: 12px;
+                font-size: 1rem; /* Увеличили */
+            }
+            
+            .mobile-restart-btn {
+                top: 15px;
+                right: 15px;
+                width: 40px;
+                height: 40px;
+            }
+            
+            .mobile-nav-toggle {
+                top: 15px;
+                left: 15px;
+                width: 40px;
+                height: 40px;
             }
         }
     </style>
@@ -772,6 +974,10 @@
 <body>
     <button class="mobile-nav-toggle" id="mobileNavToggle">
         <i class="fas fa-bars"></i>
+    </button>
+
+    <button class="mobile-restart-btn" id="mobileRestartBtn" title="Начать заново">
+        <i class="fas fa-redo"></i>
     </button>
 
     <div class="app-container">
@@ -829,22 +1035,40 @@
                     
                     <p>После ответа на каждый вопрос вы увидите подробное пояснение с объяснением правильного ответа. Навигационная панель слева позволит отслеживать прогресс и переходить к любому вопросу.</p>
                     
-                    <p>Удачи в прохождении викторины!</p>
+                    <p>Ваш прогресс автоматически сохраняется, так что вы можете продолжить в любое время!</p>
                 </div>
                 
                 <button class="start-button" id="startButton">
                     <i class="fas fa-play"></i> Начать викторину
                 </button>
+                
+                <button class="study-mode-btn" id="studyModeButton">
+                    <i class="fas fa-graduation-cap"></i> Режим обучения
+                </button>
             </div>
 
             <!-- Страница вопроса (будет заполняться динамически) -->
             <div class="question-page" id="questionPage" style="display: none;">
+                <!-- Мобильные кнопки действий -->
+                <div class="mobile-action-buttons" id="mobileActionButtons" style="display: none;">
+                    <button class="btn btn-secondary" id="mobilePrevButton">
+                        <i class="fas fa-arrow-left"></i> Назад
+                    </button>
+                </div>
+                
                 <div class="question-header">
                     <div class="question-title" id="questionTitle">Вопрос 1</div>
                     <div class="question-counter" id="questionCounter">1 из 53</div>
+                    <div id="studyModeIndicator" class="study-mode-indicator" style="display: none;">
+                        <i class="fas fa-graduation-cap"></i> Режим обучения
+                    </div>
                 </div>
                 
                 <div class="question-text" id="questionText"></div>
+                
+                <div class="question-time-info" id="questionTimeInfo" style="display: none;">
+                    <i class="far fa-clock"></i> Время на вопрос: <span id="currentQuestionTime">0:00</span>
+                </div>
                 
                 <div class="multiple-select-note" id="multipleSelectNote" style="display: none;">
                     <i class="fas fa-check-double"></i> В этом вопросе несколько правильных ответов
@@ -898,9 +1122,20 @@
                     
                     <div class="score-message" id="scoreMessage"></div>
                     
-                    <p>Вы ответили на все вопросы викторины по робототехнике и Arduino. Надеемся, вы узнали что-то новое и интересное!</p>
+                    <p>Вы ответили на все вопросы викторины по робототехнике и Arduino. Надеемся, вы узнали что-то новее и интересное!</p>
                     
                     <p>Вы можете просмотреть свои ответы и пояснения, переходя по вопросам через навигационную панель.</p>
+                </div>
+                
+                <!-- Детальная статистика -->
+                <div class="detailed-stats" id="detailedStats">
+                    <h3><i class="fas fa-chart-bar"></i> Детальная статистика</h3>
+                    <div class="stats-grid" id="statsGrid">
+                        <!-- Статистика будет заполнена через JS -->
+                    </div>
+                    <div id="totalTimeContainer">
+                        Общее время прохождения: <span id="totalTime">0:00</span>
+                    </div>
                 </div>
                 
                 <button class="restart-button" id="restartResultsButton">
@@ -1643,12 +1878,22 @@
             const restartFromNav = document.getElementById('restartFromNav');
             const restartResultsButton = document.getElementById('restartResultsButton');
             const mobileNavToggle = document.getElementById('mobileNavToggle');
+            const mobileRestartBtn = document.getElementById('mobileRestartBtn');
+            const mobilePrevButton = document.getElementById('mobilePrevButton');
+            const mobileActionButtons = document.getElementById('mobileActionButtons');
             const navigationPanel = document.getElementById('navigationPanel');
             const questionNav = document.getElementById('questionNav');
             const currentScore = document.getElementById('currentScore');
             const finalScore = document.getElementById('finalScore');
             const scoreMessage = document.getElementById('scoreMessage');
             const selectionLimit = document.getElementById('selectionLimit');
+            const questionTimeInfo = document.getElementById('questionTimeInfo');
+            const currentQuestionTime = document.getElementById('currentQuestionTime');
+            const totalTimeElement = document.getElementById('totalTime');
+            const detailedStats = document.getElementById('detailedStats');
+            const statsGrid = document.getElementById('statsGrid');
+            const studyModeButton = document.getElementById('studyModeButton');
+            const studyModeIndicator = document.getElementById('studyModeIndicator');
             
             // Элементы для отображения вопроса
             const questionTitle = document.getElementById('questionTitle');
@@ -1668,6 +1913,164 @@
             let userAnswers = Array(totalQuestions).fill(null);
             let answerSubmitted = Array(totalQuestions).fill(false);
             let score = 0;
+            let questionStartTime = null;
+            let questionTimes = Array(totalQuestions).fill(0);
+            let quizStartTime = null;
+            let totalQuizTime = 0;
+            let isStudyMode = false;
+            
+            // Массив для хранения порядка отображения вариантов для каждого вопроса
+            let questionDisplayOrder = Array(totalQuestions).fill(null);
+            
+            // Ключ для localStorage
+            const STORAGE_KEY = 'arduinoQuizProgress';
+            
+            // Функция для перемешивания массива (алгоритм Фишера-Йетса)
+            function shuffleArray(array) {
+                const newArray = [...array];
+                for (let i = newArray.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [newArray[i], newArray[j]] = [newArray[j], newArray[i]];
+                }
+                return newArray;
+            }
+            
+            // Функция для преобразования секунд в формат "мм:сс"
+            function formatTime(seconds) {
+                const minutes = Math.floor(seconds / 60);
+                const remainingSeconds = seconds % 60;
+                return `${minutes}:${remainingSeconds < 10 ? '0' : ''}${remainingSeconds}`;
+            }
+            
+            // Генерация случайного порядка отображения вариантов для вопроса
+            function generateDisplayOrder(questionIndex) {
+                const question = questions[questionIndex];
+                const optionCount = question.options.length;
+                const order = Array.from({ length: optionCount }, (_, i) => i);
+                return shuffleArray(order);
+            }
+            
+            // Получение правильных ответов в текущем порядке отображения
+            function getCorrectAnswersInDisplayOrder(questionIndex) {
+                const question = questions[questionIndex];
+                const displayOrder = questionDisplayOrder[questionIndex];
+                if (!displayOrder) return [];
+                
+                // Преобразуем правильные индексы (оригинальные) в индексы в текущем порядке отображения
+                const correctInDisplayOrder = question.correct.map(originalIndex => 
+                    displayOrder.indexOf(originalIndex)
+                ).filter(index => index !== -1); // На всякий случай фильтруем не найденные
+                
+                return correctInDisplayOrder;
+            }
+            
+            // Получение индекса оригинального варианта по индексу в отображении
+            function getOriginalIndex(questionIndex, displayIndex) {
+                const displayOrder = questionDisplayOrder[questionIndex];
+                if (!displayOrder || displayIndex < 0 || displayIndex >= displayOrder.length) {
+                    return displayIndex;
+                }
+                return displayOrder[displayIndex];
+            }
+            
+            // Получение индекса в отображении по оригинальному индексу
+            function getDisplayIndex(questionIndex, originalIndex) {
+                const displayOrder = questionDisplayOrder[questionIndex];
+                if (!displayOrder) return originalIndex;
+                return displayOrder.indexOf(originalIndex);
+            }
+            
+            // Сохранение прогресса
+            function saveProgress() {
+                const progress = {
+                    userAnswers: userAnswers,
+                    answerSubmitted: answerSubmitted,
+                    currentQuestionIndex: currentQuestionIndex,
+                    score: score,
+                    questionTimes: questionTimes,
+                    totalQuizTime: totalQuizTime,
+                    quizStartTime: quizStartTime,
+                    isStudyMode: isStudyMode,
+                    questionDisplayOrder: questionDisplayOrder,
+                    timestamp: Date.now()
+                };
+                localStorage.setItem(STORAGE_KEY, JSON.stringify(progress));
+            }
+            
+            // Загрузка прогресса
+            function loadProgress() {
+                const saved = localStorage.getItem(STORAGE_KEY);
+                if (saved) {
+                    const progress = JSON.parse(saved);
+                    // Проверяем, не устарели ли данные (например, больше 7 дней)
+                    if (Date.now() - progress.timestamp < 7 * 24 * 60 * 60 * 1000) {
+                        userAnswers = progress.userAnswers;
+                        answerSubmitted = progress.answerSubmitted;
+                        currentQuestionIndex = progress.currentQuestionIndex;
+                        score = progress.score;
+                        questionTimes = progress.questionTimes || Array(totalQuestions).fill(0);
+                        totalQuizTime = progress.totalQuizTime || 0;
+                        quizStartTime = progress.quizStartTime;
+                        isStudyMode = progress.isStudyMode || false;
+                        questionDisplayOrder = progress.questionDisplayOrder || Array(totalQuestions).fill(null);
+                        
+                        // Если порядок отображения не сохранен, генерируем его
+                        for (let i = 0; i < totalQuestions; i++) {
+                            if (!questionDisplayOrder[i]) {
+                                questionDisplayOrder[i] = generateDisplayOrder(i);
+                            }
+                        }
+                        
+                        updateScore();
+                        return true;
+                    }
+                }
+                return false;
+            }
+            
+            // Очистка сохраненного прогресса
+            function clearProgress() {
+                localStorage.removeItem(STORAGE_KEY);
+            }
+            
+            // Обновление времени вопроса
+            function updateQuestionTime() {
+                if (questionStartTime) {
+                    const elapsed = Math.floor((Date.now() - questionStartTime) / 1000);
+                    currentQuestionTime.textContent = formatTime(elapsed);
+                    
+                    // Обновляем каждую секунду
+                    if (!answerSubmitted[currentQuestionIndex]) {
+                        setTimeout(updateQuestionTime, 1000);
+                    }
+                }
+            }
+            
+            // Запуск таймера для вопроса
+            function startQuestionTimer() {
+                if (isStudyMode) return;
+                
+                questionStartTime = Date.now();
+                questionTimeInfo.style.display = 'block';
+                updateQuestionTime();
+            }
+            
+            // Остановка таймера для вопроса
+            function stopQuestionTimer() {
+                if (questionStartTime && !answerSubmitted[currentQuestionIndex]) {
+                    const elapsed = Date.now() - questionStartTime;
+                    questionTimes[currentQuestionIndex] = Math.floor(elapsed / 1000);
+                    questionStartTime = null;
+                }
+            }
+            
+            // Обновление общего времени викторины
+            function updateTotalQuizTime() {
+                if (quizStartTime) {
+                    const elapsed = Date.now() - quizStartTime;
+                    totalQuizTime = Math.floor(elapsed / 1000);
+                }
+            }
             
             // Инициализация навигации по вопросам
             function initQuestionNavigation() {
@@ -1680,7 +2083,6 @@
                     navItem.dataset.index = i;
                     
                     // Обновляем класс в зависимости от состояния ответа
-                    // Цвет меняется ТОЛЬКО после отправки ответа (answerSubmitted[i] === true)
                     if (answerSubmitted[i]) {
                         const isCorrect = checkAnswerCorrectness(i);
                         navItem.classList.remove('unanswered');
@@ -1693,6 +2095,7 @@
                     }
                     
                     navItem.addEventListener('click', () => {
+                        stopQuestionTimer();
                         goToQuestion(i);
                         // На мобильных устройствах закрываем панель навигации после выбора вопроса
                         if (window.innerWidth <= 768) {
@@ -1747,6 +2150,9 @@
                     }
                 }
                 currentScore.textContent = score;
+                
+                // Сохраняем прогресс
+                saveProgress();
             }
             
             // Переход к конкретному вопросу
@@ -1754,37 +2160,80 @@
                 // Проверяем границы
                 if (index < 0) index = 0;
                 if (index >= totalQuestions) {
+                    stopQuestionTimer();
+                    updateTotalQuizTime();
                     showResults();
                     return;
                 }
+                
+                // Останавливаем таймер предыдущего вопроса
+                stopQuestionTimer();
                 
                 currentQuestionIndex = index;
                 displayQuestion();
                 initQuestionNavigation();
                 
+                // Определяем, какие кнопки показывать
+                const isAnswered = answerSubmitted[index];
+                const isStudyOrAnswered = isAnswered || isStudyMode;
+                
                 // Показываем/скрываем кнопки навигации
                 prevButton.style.display = index > 0 ? 'flex' : 'none';
-                nextButton.style.display = 'none';
-                submitButton.style.display = answerSubmitted[index] ? 'none' : 'flex';
+                nextButton.style.display = isStudyOrAnswered ? 'flex' : 'none';
+                submitButton.style.display = isStudyOrAnswered ? 'none' : 'flex';
+                
+                // Если это последний вопрос, меняем текст кнопки "Следующий"
+                if (index === totalQuestions - 1) {
+                    nextButton.innerHTML = '<i class="fas fa-flag-checkered"></i> Завершить';
+                } else {
+                    nextButton.innerHTML = '<i class="fas fa-arrow-right"></i> Следующий';
+                }
+                
+                // Для мобильной версии
+                if (window.innerWidth <= 768) {
+                    mobilePrevButton.style.display = index > 0 ? 'flex' : 'none';
+                    mobileActionButtons.style.display = 'flex';
+                }
                 
                 // Скрываем пояснение и предупреждение о лимите
                 explanationContainer.classList.remove('show');
                 selectionLimit.style.display = 'none';
                 
-                // Прокручиваем страницу в начало
-                window.scrollTo({
-                    top: 0,
-                    behavior: 'smooth'
-                });
+                // Прокручиваем страницу в начало (особенно важно для мобильных)
+                setTimeout(() => {
+                    window.scrollTo({
+                        top: 0,
+                        behavior: 'smooth'
+                    });
+                    document.getElementById('contentArea').scrollTop = 0;
+                }, 50);
+                
+                // Запускаем таймер для нового вопроса
+                if (!isAnswered && !isStudyMode) {
+                    startQuestionTimer();
+                }
             }
             
             // Отображение текущего вопроса
             function displayQuestion() {
                 const question = questions[currentQuestionIndex];
+                const displayOrder = questionDisplayOrder[currentQuestionIndex];
+                
+                // Если порядок отображения еще не создан, создаем его
+                if (!displayOrder) {
+                    questionDisplayOrder[currentQuestionIndex] = generateDisplayOrder(currentQuestionIndex);
+                }
                 
                 // Обновляем заголовок и счетчик
                 questionTitle.textContent = `Вопрос ${question.id}`;
                 questionCounter.textContent = `${question.id} из ${totalQuestions}`;
+                
+                // Показываем индикатор режима обучения
+                if (isStudyMode) {
+                    studyModeIndicator.style.display = 'inline-flex';
+                } else {
+                    studyModeIndicator.style.display = 'none';
+                }
                 
                 // Обновляем текст вопроса
                 questionText.innerHTML = `<p>${question.question}</p>`;
@@ -1802,37 +2251,44 @@
                 // Очищаем контейнер с вариантами ответов
                 optionsContainer.innerHTML = '';
                 
-                // Создаем варианты ответов
-                question.options.forEach((option, index) => {
+                // Создаем варианты ответов в правильном порядке
+                const currentDisplayOrder = questionDisplayOrder[currentQuestionIndex];
+                const correctInDisplayOrder = getCorrectAnswersInDisplayOrder(currentQuestionIndex);
+                
+                for (let displayIndex = 0; displayIndex < currentDisplayOrder.length; displayIndex++) {
+                    const originalIndex = currentDisplayOrder[displayIndex];
+                    const option = question.options[originalIndex];
+                    
                     const optionElement = document.createElement('div');
                     optionElement.className = 'option';
-                    optionElement.dataset.index = index;
+                    optionElement.dataset.originalIndex = originalIndex;
+                    optionElement.dataset.displayIndex = displayIndex;
                     
                     // Проверяем, выбран ли этот вариант пользователем
                     const isSelected = userAnswers[currentQuestionIndex] && 
-                                       userAnswers[currentQuestionIndex].includes(index);
+                                       userAnswers[currentQuestionIndex].includes(originalIndex);
                     
                     if (isSelected) {
                         optionElement.classList.add('selected');
                     }
                     
-                    // Если ответ уже отправлен, показываем правильные/неправильные варианты
-                    if (answerSubmitted[currentQuestionIndex]) {
-                        const isCorrect = question.correct.includes(index);
+                    // Если ответ уже отправлен или режим обучения, показываем правильные/неправильные варианты
+                    if (answerSubmitted[currentQuestionIndex] || isStudyMode) {
+                        const isCorrect = correctInDisplayOrder.includes(displayIndex);
                         if (isCorrect) {
                             optionElement.classList.add('correct');
                         } else if (isSelected && !isCorrect) {
                             optionElement.classList.add('incorrect');
                         }
                         
-                        // Блокируем варианты ответа
+                        // Блокируем варианты ответа в режиме обучения или после ответа
                         optionElement.classList.add('disabled');
                     }
                     
                     // Добавляем букву варианта
                     const optionLetter = document.createElement('div');
                     optionLetter.className = 'option-letter';
-                    optionLetter.textContent = String.fromCharCode(65 + index); // A, B, C, ...
+                    optionLetter.textContent = String.fromCharCode(65 + displayIndex); // A, B, C, ...
                     
                     // Добавляем текст варианта
                     const optionText = document.createElement('div');
@@ -1842,50 +2298,59 @@
                     optionElement.appendChild(optionLetter);
                     optionElement.appendChild(optionText);
                     
-                    // Добавляем обработчик клика только если ответ еще не отправлен
-                    if (!answerSubmitted[currentQuestionIndex]) {
-                        optionElement.addEventListener('click', () => selectOption(index));
+                    // Добавляем обработчик клика только если ответ еще не отправлен и не режим обучения
+                    if (!answerSubmitted[currentQuestionIndex] && !isStudyMode) {
+                        optionElement.addEventListener('click', () => selectOption(displayIndex));
                     } else {
                         optionElement.classList.add('disabled');
                     }
                     
                     optionsContainer.appendChild(optionElement);
-                });
+                }
                 
-                // Обновляем пояснение если ответ уже отправлен
-                if (answerSubmitted[currentQuestionIndex]) {
+                // Обновляем пояснение если ответ уже отправлен или режим обучения
+                if (answerSubmitted[currentQuestionIndex] || isStudyMode) {
                     explanationText.innerHTML = `<p>${question.explanation.replace(/\n/g, '<br>')}</p>`;
                     explanationContainer.classList.add('show');
-                    
-                    // Меняем кнопку "Ответить" на "Следующий"
-                    submitButton.style.display = 'none';
-                    nextButton.style.display = 'flex';
+                }
+                
+                // Показываем время для вопроса если оно есть
+                if (questionTimes[currentQuestionIndex] > 0) {
+                    currentQuestionTime.textContent = formatTime(questionTimes[currentQuestionIndex]);
+                    questionTimeInfo.style.display = 'block';
+                } else if (!answerSubmitted[currentQuestionIndex] && !isStudyMode) {
+                    questionTimeInfo.style.display = 'block';
+                } else {
+                    questionTimeInfo.style.display = 'none';
                 }
             }
             
             // Выбор варианта ответа
-            function selectOption(optionIndex) {
+            function selectOption(displayIndex) {
                 const question = questions[currentQuestionIndex];
                 const options = document.querySelectorAll('.option');
+                
+                // Получаем оригинальный индекс
+                const originalIndex = getOriginalIndex(currentQuestionIndex, displayIndex);
                 
                 // Для вопросов с одним правильным ответом
                 if (!question.multiple) {
                     // Снимаем выделение со всех вариантов
                     options.forEach(opt => opt.classList.remove('selected'));
                     // Выделяем выбранный вариант
-                    options[optionIndex].classList.add('selected');
+                    options[displayIndex].classList.add('selected');
                     
-                    // Сохраняем ответ пользователя
-                    userAnswers[currentQuestionIndex] = [optionIndex];
+                    // Сохраняем ответ пользователя (в оригинальных индексах)
+                    userAnswers[currentQuestionIndex] = [originalIndex];
                 } 
                 // Для вопросов с несколькими правильными ответами
                 else {
                     // Проверяем, выбран ли уже этот вариант
-                    const isSelected = options[optionIndex].classList.contains('selected');
+                    const isSelected = options[displayIndex].classList.contains('selected');
                     
                     if (isSelected) {
                         // Снимаем выделение
-                        options[optionIndex].classList.remove('selected');
+                        options[displayIndex].classList.remove('selected');
                         selectionLimit.style.display = 'none';
                     } else {
                         // Определяем максимальное количество ответов для выбора
@@ -1903,15 +2368,16 @@
                         }
                         
                         // Добавляем выделение
-                        options[optionIndex].classList.add('selected');
+                        options[displayIndex].classList.add('selected');
                         selectionLimit.style.display = 'none';
                     }
                     
-                    // Собираем все выбранные варианты
+                    // Собираем все выбранные варианты (в оригинальных индексах)
                     const selectedOptions = [];
                     options.forEach((opt, idx) => {
                         if (opt.classList.contains('selected')) {
-                            selectedOptions.push(idx);
+                            const optOriginalIndex = getOriginalIndex(currentQuestionIndex, idx);
+                            selectedOptions.push(optOriginalIndex);
                         }
                     });
                     
@@ -1919,7 +2385,8 @@
                     userAnswers[currentQuestionIndex] = selectedOptions;
                 }
                 
-                // НЕ обновляем навигацию здесь - цвет не должен меняться до отправки ответа
+                // Сохраняем прогресс
+                saveProgress();
             }
             
             // Обработка ответа на вопрос
@@ -1943,6 +2410,9 @@
                     }
                 }
                 
+                // Останавливаем таймер вопроса
+                stopQuestionTimer();
+                
                 // Отмечаем, что ответ был отправлен
                 answerSubmitted[currentQuestionIndex] = true;
                 
@@ -1950,11 +2420,15 @@
                 explanationText.innerHTML = `<p>${question.explanation.replace(/\n/g, '<br>')}</p>`;
                 explanationContainer.classList.add('show');
                 
+                // Получаем правильные ответы в порядке отображения
+                const correctInDisplayOrder = getCorrectAnswersInDisplayOrder(currentQuestionIndex);
+                
                 // Показываем правильные/неправильные варианты
                 const options = document.querySelectorAll('.option');
-                options.forEach((option, index) => {
-                    const isCorrect = question.correct.includes(index);
-                    const isSelected = userAnswers[currentQuestionIndex].includes(index);
+                options.forEach((option, displayIndex) => {
+                    const isCorrect = correctInDisplayOrder.includes(displayIndex);
+                    const originalIndex = getOriginalIndex(currentQuestionIndex, displayIndex);
+                    const isSelected = userAnswers[currentQuestionIndex].includes(originalIndex);
                     
                     if (isCorrect) {
                         option.classList.add('correct');
@@ -1977,6 +2451,11 @@
                 submitButton.style.display = 'none';
                 nextButton.style.display = 'flex';
                 
+                // Для мобильной версии
+                if (window.innerWidth <= 768) {
+                    mobileActionButtons.style.display = 'flex';
+                }
+                
                 // Обновляем навигацию (теперь вопрос закрасится)
                 initQuestionNavigation();
                 
@@ -1984,16 +2463,68 @@
                 if (currentQuestionIndex === totalQuestions - 1) {
                     nextButton.innerHTML = '<i class="fas fa-flag-checkered"></i> Завершить';
                 }
+                
+                // Сохраняем прогресс
+                saveProgress();
+            }
+            
+            // Генерация детальной статистики
+            function generateDetailedStats() {
+                let totalTime = totalQuizTime;
+                let totalCorrect = 0;
+                let totalAnswered = 0;
+                
+                // Считаем правильные ответы и общее время
+                for (let i = 0; i < totalQuestions; i++) {
+                    if (answerSubmitted[i]) {
+                        totalAnswered++;
+                        if (checkAnswerCorrectness(i)) {
+                            totalCorrect++;
+                        }
+                    }
+                    if (questionTimes[i] > 0) {
+                        totalTime += questionTimes[i];
+                    }
+                }
+                
+                // Обновляем общее время
+                totalTimeElement.textContent = formatTime(totalTime);
+                
+                // Создаем статистику
+                statsGrid.innerHTML = `
+                    <div class="stat-box">
+                        <div class="stat-box-title">Правильных ответов</div>
+                        <div class="stat-box-value">${totalCorrect} из ${totalAnswered}</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-box-title">Процент правильных</div>
+                        <div class="stat-box-value">${totalAnswered > 0 ? Math.round((totalCorrect/totalAnswered)*100) : 0}%</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-box-title">Общее время</div>
+                        <div class="stat-box-value">${formatTime(totalTime)}</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-box-title">Среднее время на вопрос</div>
+                        <div class="stat-box-value">${totalAnswered > 0 ? formatTime(Math.round(totalTime/totalAnswered)) : '0:00'}</div>
+                    </div>
+                `;
             }
             
             // Показать страницу результатов
             function showResults() {
+                // Останавливаем таймер викторины
+                updateTotalQuizTime();
+                
                 // Скрываем страницу вопроса, показываем страницу результатов
                 questionPage.style.display = 'none';
                 resultsPage.style.display = 'flex';
                 
                 // Обновляем счет на странице результатов
                 finalScore.textContent = `${score} из ${totalQuestions}`;
+                
+                // Генерируем детальную статистику
+                generateDetailedStats();
                 
                 // Генерируем сообщение в зависимости от результата
                 let message = '';
@@ -2016,6 +2547,9 @@
                     top: 0,
                     behavior: 'smooth'
                 });
+                
+                // Сохраняем прогресс
+                saveProgress();
             }
             
             // Начать викторину заново
@@ -2024,11 +2558,24 @@
                     return;
                 }
                 
+                // Очищаем сохраненный прогресс
+                clearProgress();
+                
                 // Сбрасываем состояние
                 currentQuestionIndex = 0;
                 userAnswers = Array(totalQuestions).fill(null);
                 answerSubmitted = Array(totalQuestions).fill(false);
+                questionTimes = Array(totalQuestions).fill(0);
                 score = 0;
+                totalQuizTime = 0;
+                quizStartTime = Date.now();
+                isStudyMode = false;
+                
+                // Генерируем новый порядок отображения для всех вопросов
+                questionDisplayOrder = Array(totalQuestions).fill(null);
+                for (let i = 0; i < totalQuestions; i++) {
+                    questionDisplayOrder[i] = generateDisplayOrder(i);
+                }
                 
                 // Показываем стартовую страницу
                 startPage.style.display = 'flex';
@@ -2048,26 +2595,140 @@
                 });
             }
             
+            // Запуск режима обучения
+            function startStudyMode() {
+                isStudyMode = true;
+                
+                // Сбрасываем прогресс для режима обучения
+                currentQuestionIndex = 0;
+                userAnswers = Array(totalQuestions).fill(null);
+                answerSubmitted = Array(totalQuestions).fill(false);
+                score = 0;
+                
+                // Генерируем новый порядок отображения для всех вопросов
+                questionDisplayOrder = Array(totalQuestions).fill(null);
+                for (let i = 0; i < totalQuestions; i++) {
+                    questionDisplayOrder[i] = generateDisplayOrder(i);
+                }
+                
+                // Показываем страницу вопроса
+                startPage.style.display = 'none';
+                questionPage.style.display = 'flex';
+                resultsPage.style.display = 'none';
+                
+                // Обновляем счет
+                updateScore();
+                
+                // Обновляем навигацию
+                initQuestionNavigation();
+                
+                // Переходим к первому вопросу
+                goToQuestion(0);
+                
+                // Сохраняем прогресс
+                saveProgress();
+            }
+            
+            // Обработка свайпов для мобильных устройств
+            let touchStartX = 0;
+            let touchStartY = 0;
+            
+            function handleTouchStart(e) {
+                touchStartX = e.changedTouches[0].screenX;
+                touchStartY = e.changedTouches[0].screenY;
+            }
+            
+            function handleTouchEnd(e) {
+                if (!questionPage.style.display || questionPage.style.display === 'none') return;
+                
+                const touchEndX = e.changedTouches[0].screenX;
+                const touchEndY = e.changedTouches[0].screenY;
+                
+                const diffX = touchStartX - touchEndX;
+                const diffY = touchStartY - touchEndY;
+                
+                // Проверяем, что это горизонтальный свайп (не вертикальная прокрутка)
+                if (Math.abs(diffX) > Math.abs(diffY) && Math.abs(diffX) > 50) {
+                    if (diffX > 0) {
+                        // Свайп влево - следующий вопрос
+                        if (currentQuestionIndex < totalQuestions - 1) {
+                            goToQuestion(currentQuestionIndex + 1);
+                        }
+                    } else {
+                        // Свайп вправо - предыдущий вопрос
+                        if (currentQuestionIndex > 0) {
+                            goToQuestion(currentQuestionIndex - 1);
+                        }
+                    }
+                }
+            }
+            
             // Инициализация приложения
             function initApp() {
-                // Инициализируем навигацию
+                // Пытаемся загрузить сохраненный прогресс
+                const hasProgress = loadProgress();
+                
+                // Если нет сохраненного прогресса, генерируем порядок отображения
+                if (!hasProgress) {
+                    for (let i = 0; i < totalQuestions; i++) {
+                        questionDisplayOrder[i] = generateDisplayOrder(i);
+                    }
+                }
+                
+                // Если есть сохраненный прогресс, спрашиваем пользователя
+                if (hasProgress) {
+                    if (confirm('Обнаружен сохраненный прогресс. Хотите продолжить с того же места?')) {
+                        // Показываем страницу вопроса с сохраненным прогрессом
+                        startPage.style.display = 'none';
+                        questionPage.style.display = 'flex';
+                        goToQuestion(currentQuestionIndex);
+                        
+                        // Если викторина была завершена, показываем результаты
+                        if (currentQuestionIndex >= totalQuestions) {
+                            showResults();
+                        }
+                    } else {
+                        // Сбрасываем прогресс
+                        clearProgress();
+                        userAnswers = Array(totalQuestions).fill(null);
+                        answerSubmitted = Array(totalQuestions).fill(false);
+                        currentQuestionIndex = 0;
+                        score = 0;
+                        questionTimes = Array(totalQuestions).fill(0);
+                        totalQuizTime = 0;
+                        isStudyMode = false;
+                        
+                        // Генерируем новый порядок отображения
+                        for (let i = 0; i < totalQuestions; i++) {
+                            questionDisplayOrder[i] = generateDisplayOrder(i);
+                        }
+                    }
+                }
+                
+                // Инициализируем навигацию и счет
                 initQuestionNavigation();
                 updateScore();
+                
+                // Устанавливаем время начала викторины если не было загружено
+                if (!quizStartTime) {
+                    quizStartTime = Date.now();
+                }
                 
                 // Обработчики событий
                 startButton.addEventListener('click', () => {
                     startPage.style.display = 'none';
                     questionPage.style.display = 'flex';
+                    quizStartTime = Date.now();
                     goToQuestion(0);
-                    
-                    // Прокручиваем страницу в начало
-                    window.scrollTo({
-                        top: 0,
-                        behavior: 'smooth'
-                    });
                 });
                 
+                studyModeButton.addEventListener('click', startStudyMode);
+                
                 prevButton.addEventListener('click', () => {
+                    goToQuestion(currentQuestionIndex - 1);
+                });
+                
+                mobilePrevButton.addEventListener('click', () => {
                     goToQuestion(currentQuestionIndex - 1);
                 });
                 
@@ -2084,6 +2745,7 @@
                 restartButton.addEventListener('click', restartQuiz);
                 restartFromNav.addEventListener('click', restartQuiz);
                 restartResultsButton.addEventListener('click', restartQuiz);
+                mobileRestartBtn.addEventListener('click', restartQuiz);
                 
                 mobileNavToggle.addEventListener('click', () => {
                     navigationPanel.classList.toggle('active');
@@ -2093,9 +2755,40 @@
                 document.addEventListener('click', (e) => {
                     if (window.innerWidth <= 768 && 
                         !navigationPanel.contains(e.target) && 
-                        !mobileNavToggle.contains(e.target)) {
+                        !mobileNavToggle.contains(e.target) &&
+                        !mobileRestartBtn.contains(e.target)) {
                         navigationPanel.classList.remove('active');
                     }
+                });
+                
+                // Добавляем обработчики свайпов для мобильных устройств
+                document.addEventListener('touchstart', handleTouchStart, false);
+                document.addEventListener('touchend', handleTouchEnd, false);
+                
+                // Скрываем/показываем мобильные элементы в зависимости от размера экрана
+                function updateMobileUI() {
+                    if (window.innerWidth <= 768) {
+                        mobileActionButtons.style.display = questionPage.style.display !== 'none' ? 'flex' : 'none';
+                        mobileRestartBtn.style.display = 'flex';
+                        // Скрываем кнопку "Начать заново" внизу на мобильных
+                        restartButton.style.display = 'none';
+                    } else {
+                        mobileActionButtons.style.display = 'none';
+                        mobileRestartBtn.style.display = 'none';
+                        // Показываем кнопку "Начать заново" внизу на десктопе
+                        restartButton.style.display = 'flex';
+                    }
+                }
+                
+                // Обновляем UI при загрузке и изменении размера окна
+                updateMobileUI();
+                window.addEventListener('resize', updateMobileUI);
+                
+                // Сохраняем прогресс при закрытии страницы
+                window.addEventListener('beforeunload', () => {
+                    stopQuestionTimer();
+                    updateTotalQuizTime();
+                    saveProgress();
                 });
             }
             
