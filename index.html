@@ -17,7 +17,7 @@
             --dark-text: #2c3e50;
             --shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             --border-radius: 8px;
-            --question-bg: #e0e0e0; /* Более темный серый цвет */
+            --question-bg: #e0e0e0;
         }
 
         * {
@@ -41,7 +41,6 @@
             min-height: 100vh;
         }
 
-        /* Навигационная панель */
         .navigation-panel {
             width: 280px;
             background-color: var(--primary-color);
@@ -144,7 +143,6 @@
             opacity: 0.9;
         }
 
-        /* Основной контент */
         .content-area {
             flex: 1;
             padding: 30px;
@@ -153,7 +151,6 @@
             flex-direction: column;
         }
 
-        /* Стартовая страница */
         .start-page {
             display: flex;
             flex-direction: column;
@@ -245,7 +242,6 @@
             box-shadow: 0 6px 15px rgba(52, 152, 219, 0.4);
         }
 
-        /* Страница вопроса */
         .question-page {
             display: flex;
             flex-direction: column;
@@ -278,7 +274,7 @@
         }
 
         .question-text {
-            background-color: var(--question-bg); /* Применяем более темный серый цвет */
+            background-color: var(--question-bg);
             padding: 25px;
             border-radius: var(--border-radius);
             box-shadow: var(--shadow);
@@ -461,7 +457,6 @@
             font-size: 1rem;
         }
 
-        /* Мобильная навигация */
         .mobile-nav-toggle {
             display: none;
             position: fixed;
@@ -479,7 +474,6 @@
             box-shadow: var(--shadow);
         }
 
-        /* Плавающая кнопка "Начать заново" для мобильных */
         .mobile-restart-btn {
             display: none;
             position: fixed;
@@ -499,7 +493,6 @@
             align-items: center;
         }
 
-        /* Результаты */
         .results-page {
             display: flex;
             flex-direction: column;
@@ -553,7 +546,6 @@
             box-shadow: 0 6px 15px rgba(52, 152, 219, 0.4);
         }
 
-        /* Детальная статистика */
         .detailed-stats {
             background-color: white;
             border-radius: var(--border-radius);
@@ -606,7 +598,6 @@
             font-style: italic;
         }
 
-        /* Режим обучения */
         .study-mode-btn {
             background-color: #9b59b6;
             color: white;
@@ -641,7 +632,6 @@
             gap: 5px;
         }
 
-        /* Анимации */
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
             to { opacity: 1; transform: translateY(0); }
@@ -668,7 +658,6 @@
             animation: incorrectAnswer 0.3s ease;
         }
 
-        /* Адаптивность */
         @media (max-width: 1024px) {
             .navigation-panel {
                 width: 240px;
@@ -681,7 +670,7 @@
 
         @media (max-width: 768px) {
             html {
-                font-size: 15px; /* Увеличили с 13px до 15px */
+                font-size: 15px;
             }
             
             body {
@@ -728,7 +717,7 @@
             .question-nav-item {
                 width: 36px;
                 height: 36px;
-                font-size: 0.95rem; /* Увеличили с 0.9rem */
+                font-size: 0.95rem;
             }
             
             .action-buttons {
@@ -742,45 +731,45 @@
             }
             
             .question-text {
-                font-size: 1.15rem; /* Увеличили с 1.1rem */
+                font-size: 1.15rem;
                 line-height: 1.7;
                 padding: 20px;
                 margin-bottom: 20px;
             }
             
             .question-title {
-                font-size: 1.4rem; /* Увеличили с 1.3rem */
+                font-size: 1.4rem;
             }
             
             .question-counter {
-                font-size: 1rem; /* Увеличили с 0.9rem */
-                padding: 8px 15px; /* Увеличили padding */
+                font-size: 1rem;
+                padding: 8px 15px;
             }
             
             .option {
-                font-size: 1.1rem; /* Увеличили с 1.05rem */
+                font-size: 1.1rem;
                 padding: 16px;
                 margin-bottom: 12px;
             }
             
             .option-letter {
-                width: 34px; /* Увеличили с 32px */
-                height: 34px; /* Увеличили с 32px */
-                font-size: 1rem; /* Увеличили с 0.95rem */
+                width: 34px;
+                height: 34px;
+                font-size: 1rem;
                 margin-right: 12px;
             }
             
             .explanation-text {
-                font-size: 1.1rem; /* Увеличили с 1.05rem */
+                font-size: 1.1rem;
                 line-height: 1.6;
             }
             
             .logo {
-                font-size: 3rem; /* Увеличили с 2.8rem */
+                font-size: 3rem;
             }
             
             .logo-subtitle {
-                font-size: 1.4rem; /* Увеличили с 1.3rem */
+                font-size: 1.4rem;
             }
             
             .info-card {
@@ -788,17 +777,17 @@
             }
             
             .info-card h2 {
-                font-size: 1.4rem; /* Увеличили с 1.3rem */
+                font-size: 1.4rem;
             }
             
             .start-button, .restart-button {
-                padding: 15px 40px; /* Увеличили с 14px 35px */
-                font-size: 1.15rem; /* Увеличили с 1.1rem */
+                padding: 15px 40px;
+                font-size: 1.15rem;
             }
             
             .multiple-select-note, .selection-limit {
                 padding: 12px;
-                font-size: 1rem; /* Увеличили с 0.95rem */
+                font-size: 1rem;
             }
             
             .explanation {
@@ -806,20 +795,17 @@
             }
             
             .score-value {
-                font-size: 1.9rem; /* Увеличили с 1.8rem */
+                font-size: 1.9rem;
             }
             
-            /* Скрываем кнопку "Начать заново" в навигации на мобильных */
             #restartFromNav {
                 display: none;
             }
             
-            /* Скрываем кнопку "Начать заново" внизу на мобильных */
             #restartButton {
                 display: none !important;
             }
             
-            /* Показываем кнопку "Начать заново" в мобильной версии в контенте */
             .mobile-action-buttons {
                 display: flex;
                 gap: 10px;
@@ -837,7 +823,7 @@
 
         @media (max-width: 480px) {
             html {
-                font-size: 14px; /* Увеличили с 12px до 14px */
+                font-size: 14px;
             }
             
             body {
@@ -856,37 +842,37 @@
             .question-nav-item {
                 width: 34px;
                 height: 34px;
-                font-size: 0.9rem; /* Увеличили с 0.85rem */
+                font-size: 0.9rem;
             }
             
             .question-title {
-                font-size: 1.3rem; /* Увеличили с 1.25rem */
+                font-size: 1.3rem;
             }
             
             .question-text {
                 padding: 18px;
-                font-size: 1.1rem; /* Увеличили с 1.05rem */
+                font-size: 1.1rem;
                 line-height: 1.6;
             }
             
             .option {
-                font-size: 1.05rem; /* Увеличили с 1rem */
+                font-size: 1.05rem;
                 padding: 14px;
             }
             
             .option-letter {
-                width: 32px; /* Увеличили с 30px */
-                height: 32px; /* Увеличили с 30px */
-                font-size: 0.95rem; /* Увеличили с 0.9rem */
+                width: 32px;
+                height: 32px;
+                font-size: 0.95rem;
                 margin-right: 10px;
             }
             
             .logo {
-                font-size: 2.5rem; /* Увеличили с 2.3rem */
+                font-size: 2.5rem;
             }
             
             .logo-subtitle {
-                font-size: 1.2rem; /* Увеличили с 1.1rem */
+                font-size: 1.2rem;
             }
             
             .info-card {
@@ -894,7 +880,7 @@
             }
             
             .info-card h2 {
-                font-size: 1.3rem; /* Увеличили с 1.2rem */
+                font-size: 1.3rem;
             }
             
             .action-buttons {
@@ -911,11 +897,11 @@
             }
             
             .final-score {
-                font-size: 3rem; /* Увеличили с 2.8rem */
+                font-size: 3rem;
             }
             
             .score-message {
-                font-size: 1.15rem; /* Увеличили с 1.1rem */
+                font-size: 1.15rem;
             }
             
             .mobile-restart-btn {
@@ -933,7 +919,7 @@
         
         @media (max-width: 360px) {
             html {
-                font-size: 13px; /* Увеличили с 11px до 13px */
+                font-size: 13px;
             }
             
             body {
@@ -947,12 +933,12 @@
             
             .question-text {
                 padding: 15px;
-                font-size: 1.05rem; /* Увеличили */
+                font-size: 1.05rem;
             }
             
             .option {
                 padding: 12px;
-                font-size: 1rem; /* Увеличили */
+                font-size: 1rem;
             }
             
             .mobile-restart-btn {
@@ -981,7 +967,6 @@
     </button>
 
     <div class="app-container">
-        <!-- Навигационная панель -->
         <div class="navigation-panel" id="navigationPanel">
             <div class="nav-header">
                 <h2><i class="fas fa-microchip"></i> Викторина по Arduino</h2>
@@ -1001,9 +986,7 @@
             </div>
         </div>
 
-        <!-- Основная область контента -->
         <div class="content-area" id="contentArea">
-            <!-- Стартовая страница -->
             <div class="start-page" id="startPage">
                 <div class="logo-container">
                     <div class="logo">5С СИЛАЭДР</div>
@@ -1047,9 +1030,7 @@
                 </button>
             </div>
 
-            <!-- Страница вопроса (будет заполняться динамически) -->
             <div class="question-page" id="questionPage" style="display: none;">
-                <!-- Мобильные кнопки действий -->
                 <div class="mobile-action-buttons" id="mobileActionButtons" style="display: none;">
                     <button class="btn btn-secondary" id="mobilePrevButton">
                         <i class="fas fa-arrow-left"></i> Назад
@@ -1108,7 +1089,6 @@
                 </div>
             </div>
 
-            <!-- Страница результатов -->
             <div class="results-page" id="resultsPage" style="display: none;">
                 <div class="logo-container">
                     <div class="logo">5С СИЛАЭДР</div>
@@ -1127,7 +1107,6 @@
                     <p>Вы можете просмотреть свои ответы и пояснения, переходя по вопросам через навигационную панель.</p>
                 </div>
                 
-                <!-- Детальная статистика -->
                 <div class="detailed-stats" id="detailedStats">
                     <h3><i class="fas fa-chart-bar"></i> Детальная статистика</h3>
                     <div class="stats-grid" id="statsGrid">
@@ -1145,7 +1124,6 @@
         </div>
     </div>
 
-    <!-- Данные вопросов -->
     <script id="questionsData" type="application/json">
         [
             {
@@ -1574,12 +1552,12 @@
                     "Общий вывод должен быть к GND"
                 ],
                 "correct": [0],
-                "explanation": "Если общий вывод — анод (→ 5 В), то для включения канала нужно, чтобы ток шёл через светодиод в GND, т.е. пин должен быть LOW,\ndigitalWrite(pin, HIGH) = 5 В → разность потенциалов = 0 → светодиод не горит.\n✅ Правильно:\nОбщий анод: digitalWrite(pin, LOW) = включено,\nОбщий катод: digitalWrite(pin, HIGH) = включено.\n💡 Проверяйте маркировку на корпусе LED: плоская сторона — катод.",
+                "explanation": "Если общий вывод — анод (→ 5 В), то для включения канала нужно, чтобы ток шёл через светодиод в GND, т.е. пин должен быть LOW,\ndigitalWrite(pin, HIGH) = 5 В → разность потенциалов = 0 → светодиод не горит.\n✅ Правильно:\nОбщий анод: digitalWrite(pin, LOW) = включено,\nОбщий катод: digitalWrite(pin, HIGH) = включено.\n💡 Проверяйте маркировка на корпусе LED: плоская сторона — катод.",
                 "multiple": false
             },
             {
                 "id": 34,
-                "question": "Схема: Тактовая кнопка (4 вывода, попарно замкнуты внутри) установлена на макетную плату. Один контакт кнопки соединён с цифровым пином D2, диагонально противоположный контакт соединён с GND, другие два контакта не используются. В коде: pinMode(2, INPUT) и ожидание HIGH. Ошибка:",
+                "question": "Схема: Тактовая кнопка (4 вывода, попарно замкнуты внутри) установлена на макетную плату. Один контакт кнопки соединён с цифровым пином D2, диагонально противоположный контакт соединён с GND, другие два контакта не используются. В коде: pinMode(2, INPUT) и ожидание HIGH при нажатии. Ошибка:",
                 "options": [
                     "Пин «висит в воздухе» при отпущенной кнопке",
                     "Кнопку нельзя к GND",
@@ -1793,7 +1771,7 @@
                     "Компонент, усиливающий сигнал"
                 ],
                 "correct": [2],
-                "explanation": "Резистор — пассивный элемент, который:\n\nОграничивает ток (по закону Ома: I=U/R),\nСоздаёт падение напряжения (U=I⋅R),\nНе имеет полярности (подключают в любом направлении).\n❗ Не путать с:\nКонденсатором (накапливает заряд),\nСветодиодом (светится),\nТранзистором (усиливает/ключ).",
+                "explanation": "Резистор — пассивный элемент, который:\n\nОграничивает ток (по закону Ома: I=U/R),\nСоздаёт падение напряжение (U=I⋅R),\nНе имеет полярности (подключают в любом направлении).\n❗ Не путать с:\nКонденсатором (накапливает заряд),\nСветодиодом (светится),\nТранзистором (усиливает/ключ).",
                 "multiple": false
             },
             {
@@ -1943,10 +1921,17 @@
             }
             
             // Генерация случайного порядка отображения вариантов для вопроса
+            // Для вопроса 34 (индекс 33) не перемешиваем варианты
             function generateDisplayOrder(questionIndex) {
                 const question = questions[questionIndex];
                 const optionCount = question.options.length;
                 const order = Array.from({ length: optionCount }, (_, i) => i);
+                
+                // Для вопроса 34 (id=34, индекс 33) не перемешиваем варианты
+                if (question.id === 34) {
+                    return order; // Возвращаем исходный порядок [0,1,2,3]
+                }
+                
                 return shuffleArray(order);
             }
             
@@ -2217,12 +2202,13 @@
             // Отображение текущего вопроса
             function displayQuestion() {
                 const question = questions[currentQuestionIndex];
-                const displayOrder = questionDisplayOrder[currentQuestionIndex];
                 
                 // Если порядок отображения еще не создан, создаем его
-                if (!displayOrder) {
+                if (!questionDisplayOrder[currentQuestionIndex]) {
                     questionDisplayOrder[currentQuestionIndex] = generateDisplayOrder(currentQuestionIndex);
                 }
+                
+                const displayOrder = questionDisplayOrder[currentQuestionIndex];
                 
                 // Обновляем заголовок и счетчик
                 questionTitle.textContent = `Вопрос ${question.id}`;
@@ -2252,12 +2238,11 @@
                 optionsContainer.innerHTML = '';
                 
                 // Создаем варианты ответов в правильном порядке
-                const currentDisplayOrder = questionDisplayOrder[currentQuestionIndex];
                 const correctInDisplayOrder = getCorrectAnswersInDisplayOrder(currentQuestionIndex);
                 
-                for (let displayIndex = 0; displayIndex < currentDisplayOrder.length; displayIndex++) {
-                    const originalIndex = currentDisplayOrder[displayIndex];
-                    const option = question.options[originalIndex];
+                for (let displayIndex = 0; displayIndex < displayOrder.length; displayIndex++) {
+                    const originalIndex = displayOrder[displayIndex];
+                    const optionTextContent = question.options[originalIndex];
                     
                     const optionElement = document.createElement('div');
                     optionElement.className = 'option';
@@ -2293,7 +2278,7 @@
                     // Добавляем текст варианта
                     const optionText = document.createElement('div');
                     optionText.className = 'option-text';
-                    optionText.textContent = option;
+                    optionText.textContent = optionTextContent;
                     
                     optionElement.appendChild(optionLetter);
                     optionElement.appendChild(optionText);
